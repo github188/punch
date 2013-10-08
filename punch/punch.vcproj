@@ -50,7 +50,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -214,6 +214,30 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="src"
+				>
+				<File
+					RelativePath="..\..\..\niwho_libs\boost_1_54_0\libs\date_time\src\gregorian\date_generators.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\niwho_libs\boost_1_54_0\libs\date_time\src\gregorian\greg_month.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\niwho_libs\boost_1_54_0\libs\date_time\src\gregorian\greg_names.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\niwho_libs\boost_1_54_0\libs\date_time\src\gregorian\greg_weekday.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\niwho_libs\boost_1_54_0\libs\date_time\src\gregorian\gregorian_types.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
