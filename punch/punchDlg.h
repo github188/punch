@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "myworktime.h"
 
 // CpunchDlg ¶Ô»°¿ò
 class CpunchDlg : public CDialog
@@ -31,4 +31,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonStartTime();
+	afx_msg void OnBnClickedButtonLeaveTime();
+private:
+	CMyWorkTime m_mytime;
 };
