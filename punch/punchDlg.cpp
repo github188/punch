@@ -52,7 +52,7 @@ END_MESSAGE_MAP()
 
 
 CpunchDlg::CpunchDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CpunchDlg::IDD, pParent),m_mytime(8,1)
+	: CDialog(CpunchDlg::IDD, pParent),m_mytime(0,0)//8,1 for test
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_START_TIME, &CpunchDlg::OnBnClickedButtonStartTime)
 	ON_BN_CLICKED(IDC_BUTTON_LEAVE_TIME, &CpunchDlg::OnBnClickedButtonLeaveTime)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -104,6 +105,8 @@ BOOL CpunchDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	
+	
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -168,6 +171,7 @@ void CpunchDlg::OnBnClickedButtonStartTime()
 	
 	//date d(day_clock::local_day());
 	m_mytime.Init();
+	SetTimer(1, 1000, NULL);
 	ptime t(second_clock::local_time());
 	std::string time = posix_time::to_iso_extended_string(t);
 	SetDlgItemText(IDC_STATIC_PUNCH_IN,time.c_str());
@@ -182,4 +186,21 @@ void CpunchDlg::OnBnClickedButtonLeaveTime()
 	std::string time = posix_time::to_iso_extended_string(noon);
 	SetDlgItemText(IDC_STATIC_PUNCH_OUT,time.c_str());
 	//time_period 
+}
+
+void CpunchDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	if(m_mytime.LeaveHappy())
+	{
+		this->ShowWindow(TRUE);
+		this->GetFocus();
+		KillTimer(1);
+		ptime t(second_clock::local_time());
+		std::string time = posix_time::to_iso_extended_string(t);
+		SetDlgItemText(IDC_STATIC_PUNCH_OUT,time.c_str());
+		AfxMessageBox("Happy Leave!:)");
+	}
+
+	CDialog::OnTimer(nIDEvent);
 }

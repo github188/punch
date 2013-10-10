@@ -20,11 +20,16 @@ CMyWorkTime::~CMyWorkTime(void)
 void CMyWorkTime::Init()
 {
 	mp_start = new boost::posix_time::ptime(second_clock::local_time());
-	mp_worktime = new boost::posix_time::time_period(*mp_start,time_duration(m_iwork+m_irest,0,0));
+	mp_worktime = new boost::posix_time::time_period(*mp_start,time_duration(m_iwork+m_irest,0,5));//'5 'for test
 
 }
 
 bool CMyWorkTime::LeaveHappy(ptime t)
 {
 	return mp_worktime->contains(t);
+}
+
+bool CMyWorkTime::LeaveHappy( )
+{
+	return !mp_worktime->contains(second_clock::local_time());
 }
