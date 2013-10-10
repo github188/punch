@@ -15,6 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
+#define WM_MYSHELL_NOTIFY WM_USER+2013
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialog
@@ -70,6 +71,8 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_START_TIME, &CpunchDlg::OnBnClickedButtonStartTime)
 	ON_BN_CLICKED(IDC_BUTTON_LEAVE_TIME, &CpunchDlg::OnBnClickedButtonLeaveTime)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BUTTON_FOR_TEST, &CpunchDlg::OnBnClickedButtonForTest)
+	ON_MESSAGE()
 END_MESSAGE_MAP()
 
 
@@ -203,4 +206,29 @@ void CpunchDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialog::OnTimer(nIDEvent);
+}
+
+typedef HRESULT (__stdcall *PDllGetVersion)(DLLVERSIONINFO *pdvi);
+
+void CpunchDlg::OnBnClickedButtonForTest()
+{
+	// TODO: Add your control notification handler code here
+	HMODULE libshell =  LoadLibrary ("shell32.dll");
+	PDllGetVersion func_ver = (PDllGetVersion)GetProcAddress(libshell,"DllGetVersion");
+	DLLVERSIONINFO dvi;
+	dvi.cbSize = sizeof(DLLVERSIONINFO);
+	if(S_OK == func_ver(/*(DLLVERSIONINFO*)(void*)*/&dvi))
+	{
+		dvi;	
+	}
+	NOTIFYICONDATA nid;
+	nid.cbSize = sizeof(NOTIFYICONDATA);
+	nid.hWnd = this->GetSafeHwnd();
+	nid.uID = 201355;
+	nid.uFlags = NIF_ICON | NIF_MESSAGE |NIF_TIP;
+	nid.hIcon = m_hIcon;
+	nid.uCallbackMessage = WM_MYSHELL_NOTIFY;
+	nid.szTip = "HappyLeave";
+
+	Shell_NotifyIcon(NIM_ADD,&nid);
 }

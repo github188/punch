@@ -36,4 +36,5 @@ private:
 	CMyWorkTime m_mytime;
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedButtonForTest();
 };
