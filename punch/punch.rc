@@ -170,6 +170,21 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDR_MENU_SYSTRAY MENU 
+BEGIN
+    POPUP "systray"
+    BEGIN
+        MENUITEM "ÏÔÊ¾",                          ID_SYSTRAY_SHOW
+        MENUITEM "ÍË³ö",                          ID_SYSTRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 

@@ -37,4 +37,8 @@ private:
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonForTest();
+	afx_msg LRESULT OnMyTray(WPARAM wParam,LPARAM lParam);
+	afx_msg void OnClose();
+	afx_msg void OnSystrayShow();
+	afx_msg void OnSystrayQuit();
 };

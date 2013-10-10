@@ -72,7 +72,10 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_LEAVE_TIME, &CpunchDlg::OnBnClickedButtonLeaveTime)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON_FOR_TEST, &CpunchDlg::OnBnClickedButtonForTest)
-	ON_MESSAGE()
+	ON_MESSAGE(WM_MYSHELL_NOTIFY,&CpunchDlg::OnMyTray)
+	ON_WM_CLOSE()
+	ON_COMMAND(ID_SYSTRAY_SHOW, &CpunchDlg::OnSystrayShow)
+	ON_COMMAND(ID_SYSTRAY_QUIT, &CpunchDlg::OnSystrayQuit)
 END_MESSAGE_MAP()
 
 
@@ -228,7 +231,74 @@ void CpunchDlg::OnBnClickedButtonForTest()
 	nid.uFlags = NIF_ICON | NIF_MESSAGE |NIF_TIP;
 	nid.hIcon = m_hIcon;
 	nid.uCallbackMessage = WM_MYSHELL_NOTIFY;
-	nid.szTip = "HappyLeave";
+	nid.uVersion = NOTIFYICON_VERSION;  
+	strcpy(nid.szTip , "HappyLeave");
 
 	Shell_NotifyIcon(NIM_ADD,&nid);
+}
+
+LRESULT CpunchDlg::OnMyTray(WPARAM wParam,LPARAM lParam)
+{
+	if(wParam!=201355)
+		return 1;
+	switch(lParam)
+	{
+	case WM_RBUTTONUP://右键起来时弹出快捷菜单，这里只有一个“关闭”
+		{
+			/*LPPOINT lpoint=new tagPOINT;
+			::GetCursorPos(lpoint);//得到鼠标位置
+			CMenu menu;
+			menu.CreatePopupMenu();//声明一个弹出式菜单
+			//增加菜单项“关闭”，点击则发送消息WM_DESTROY给主窗口（已
+			//隐藏），将程序结束。
+			menu.AppendMenu(MF_STRING,WM_DESTROY,"关闭"); 
+			//确定弹出式菜单的位置
+			menu.TrackPopupMenu(TPM_LEFTALIGN,lpoint->x,lpoint->y,this);
+			//资源回收
+			HMENU hmenu=menu.Detach();
+			menu.DestroyMenu();
+			delete lpoint;*/
+			//AfxMessageBox("rbuttonup");
+			CMenu   menu;   //定义下面要用到的cmenu对象
+			menu.LoadMenu(IDR_MENU_SYSTRAY); //装载自定义的右键菜单 
+			CMenu   *pContextMenu=menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
+			CPoint point;//定义一个用于确定光标位置的位置  
+			GetCursorPos(&point);//获取当前光标的位置，以便使得菜单可以跟随光标  
+			pContextMenu->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON,point.x,point.y,   AfxGetMainWnd()); //在指定位置显示弹出菜单
+		}
+		break;
+	case WM_LBUTTONDBLCLK://双击左键的处理
+		{
+			this->ShowWindow(SW_SHOW);//简单的显示主窗口完事儿
+		}
+		break;
+	}
+	return 0;
+}
+void CpunchDlg::OnClose()
+{
+	// TODO: Add your message handler code here and/or call default
+	//AfxMessageBox("onclose");
+	this->ShowWindow(SW_HIDE);
+//	CDialog::OnClose();
+}
+
+void CpunchDlg::OnSystrayShow()
+{
+	// TODO: Add your command handler code here
+	this->ShowWindow(SW_SHOW);
+}
+
+void CpunchDlg::OnSystrayQuit()
+{
+	// TODO: Add your command handler code here
+	NOTIFYICONDATA nid;
+	nid.cbSize = sizeof(NOTIFYICONDATA);
+	nid.hWnd = this->GetSafeHwnd();
+	nid.uID = 201355;
+	
+
+	Shell_NotifyIcon(NIM_DELETE,&nid);
+	CDialog::OnClose();
+	DestroyWindow();
 }
