@@ -280,6 +280,7 @@ void CpunchDlg::OnClose()
 	// TODO: Add your message handler code here and/or call default
 	//AfxMessageBox("onclose");
 	this->ShowWindow(SW_HIDE);
+	
 //	CDialog::OnClose();
 }
 
@@ -287,6 +288,8 @@ void CpunchDlg::OnSystrayShow()
 {
 	// TODO: Add your command handler code here
 	this->ShowWindow(SW_SHOW);
+	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+	this->GetFocus();
 }
 
 void CpunchDlg::OnSystrayQuit()
