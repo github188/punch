@@ -20,6 +20,7 @@ class boost::posix_time::time_period;*/
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost\date_time\local_time\local_time.hpp"
+
 //#include "boost/thread.hpp"
 using namespace boost;
 using namespace local_time;
@@ -37,6 +38,8 @@ public:
 	void Init(int t_hours,int t_minuts=0,int t_seconds=0);
 	bool LeaveHappy(ptime t);
 	bool LeaveHappy();
+	std::string time_start_str();
+	std::string time_end_str();
 private:
 	CMyWorkTime(void);
 	boost::posix_time::ptime* mp_start;

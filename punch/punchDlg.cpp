@@ -125,7 +125,7 @@ BOOL CpunchDlg::OnInitDialog()
 	nid.hIcon = m_hIcon;
 	nid.uCallbackMessage = WM_MYSHELL_NOTIFY;
 	nid.uVersion = NOTIFYICON_VERSION;  
-	strcpy(nid.szTip , "HappyLeave");
+	strcpy_s(nid.szTip , 11,"HappyLeave");
 
 	Shell_NotifyIcon(NIM_ADD,&nid);
 	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
@@ -250,8 +250,8 @@ void CpunchDlg::OnBnClickedButtonForTest()
 	nid.hIcon = m_hIcon;
 	nid.uCallbackMessage = WM_MYSHELL_NOTIFY;
 	nid.uVersion = NOTIFYICON_VERSION;  
-	strcpy(nid.szTip , "HappyLeave");
-
+	/*strcpy(nid.szTip , "HappyLeave");*/
+	strcpy_s(nid.szTip , 11,"HappyLeave");
 	Shell_NotifyIcon(NIM_ADD,&nid);
 }
 
@@ -340,11 +340,15 @@ UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
 	case PBT_APMRESUMESUSPEND://恢复
 		//AfxMessageBox("PBT_APMRESUMESUSPEND");
 		//从系统恢复开始自动计时
+		KillTimer(1);
 		m_mytime.Init();
+		SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
+		SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
+		OnSystrayShow();
 		SetTimer(1, 1000, NULL);
 		break;
 	case PBT_APMSUSPEND://进入待机 or 休眠
-		KillTimer(1);
+		//KillTimer(1);
 		//AfxMessageBox("PBT_APMSUSPEND");
 		//OnSystrayQuit();
 
@@ -392,7 +396,7 @@ void CpunchDlg::OnSystraySuspend()
 		tp.Privileges[0].Attributes =SE_PRIVILEGE_ENABLED;
 		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
 	}
-	KillTimer(1);
+	//KillTimer(1);
 	::SetSystemPowerState(true,true);//不会给自身再发送 PBT_APMSUSPEND 消息
 
 }

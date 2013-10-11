@@ -40,3 +40,19 @@ bool CMyWorkTime::LeaveHappy( )
 {
 	return !mp_worktime->contains(second_clock::local_time());
 }
+
+//必须在init后才能调用
+std::string CMyWorkTime::time_start_str()
+{
+	if(mp_start)
+		return to_simple_string(*mp_start);
+	return to_simple_string(second_clock::local_time());
+}
+
+//必须在init后才能调用
+std::string CMyWorkTime::time_end_str()
+{
+	if(mp_worktime)
+		return to_simple_string(mp_worktime->last());
+	return to_simple_string(second_clock::local_time());
+}
