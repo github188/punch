@@ -8,7 +8,7 @@
 // CpunchDlg 对话框
 class CpunchDlg : public CDialog
 {
-// 构造
+// 构造 
 public:
 	CpunchDlg(CWnd* pParent = NULL);	// 标准构造函数
 
@@ -38,7 +38,11 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonForTest();
 	afx_msg LRESULT OnMyTray(WPARAM wParam,LPARAM lParam);
+	afx_msg LRESULT OnHappyLeave(WPARAM wParam,LPARAM lParam);
 	afx_msg void OnClose();
 	afx_msg void OnSystrayShow();
 	afx_msg void OnSystrayQuit();
+	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, UINT nEventData);
+	afx_msg void OnSystrayHibernation();
+	afx_msg void OnSystraySuspend();
 };

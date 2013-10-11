@@ -34,6 +34,7 @@ public:
 	~CMyWorkTime(void);
 public:
 	void Init();
+	void Init(int t_hours,int t_minuts=0,int t_seconds=0);
 	bool LeaveHappy(ptime t);
 	bool LeaveHappy();
 private:

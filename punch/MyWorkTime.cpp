@@ -24,6 +24,13 @@ void CMyWorkTime::Init()
 
 }
 
+void CMyWorkTime::Init(int t_hours,int t_minuts,int t_seconds)
+{
+	mp_start = new boost::posix_time::ptime(/*second_clock::local_time().date()*/day_clock::local_day(),time_duration(t_hours,t_minuts,t_seconds));
+	mp_worktime = new boost::posix_time::time_period(*mp_start,time_duration(m_iwork+m_irest,0,5));//'5 'for test
+
+}
+
 bool CMyWorkTime::LeaveHappy(ptime t)
 {
 	return mp_worktime->contains(t);

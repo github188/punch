@@ -98,7 +98,7 @@ BEGIN
     PUSHBUTTON      "Punch out",IDC_BUTTON_LEAVE_TIME,33,81,44,17
     CTEXT           "NULL",IDC_STATIC_PUNCH_IN,89,34,118,10
     CTEXT           "NULL",IDC_STATIC_PUNCH_OUT,89,81,118,10
-    PUSHBUTTON      "test",IDC_BUTTON_FOR_TEST,111,114,50,14
+    PUSHBUTTON      "test",IDC_BUTTON_FOR_TEST,7,146,6,6,NOT WS_VISIBLE
 END
 
 
@@ -124,13 +124,13 @@ BEGIN
     BEGIN
         BLOCK "080403a8"
         BEGIN
-            VALUE "CompanyName", "TODO: <公司名>"
-            VALUE "FileDescription", "TODO: <文件说明>"
+            VALUE "CompanyName", "niwho"
+            VALUE "FileDescription", "punch made by niwho"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "punch.exe"
-            VALUE "LegalCopyright", "TODO: (C) <公司名>。保留所有权利。"
+            VALUE "LegalCopyright", "gpl"
             VALUE "OriginalFilename", "punch.exe"
-            VALUE "ProductName", "TODO: <产品名>"
+            VALUE "ProductName", "PUNCH"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -178,6 +178,8 @@ BEGIN
     POPUP "systray"
     BEGIN
         MENUITEM "显示",                          ID_SYSTRAY_SHOW
+        MENUITEM "待机",                          ID_SYSTRAY_SUSPEND
+        MENUITEM "休眠",                          ID_SYSTRAY_HIBERNATION
         MENUITEM "退出",                          ID_SYSTRAY_QUIT
     END
 END

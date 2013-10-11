@@ -61,6 +61,7 @@ BOOL CpunchApp::InitInstance()
 
 	CpunchDlg dlg;
 	m_pMainWnd = &dlg;
+	//dlg.ShowWindow(SW_HIDE);
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{

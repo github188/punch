@@ -16,6 +16,7 @@
 #endif
 
 #define WM_MYSHELL_NOTIFY WM_USER+2013
+#define WM_HAPPY_LEAVE WM_USER+2014
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialog
@@ -73,9 +74,13 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON_FOR_TEST, &CpunchDlg::OnBnClickedButtonForTest)
 	ON_MESSAGE(WM_MYSHELL_NOTIFY,&CpunchDlg::OnMyTray)
+	ON_MESSAGE(WM_HAPPY_LEAVE,&CpunchDlg::OnHappyLeave)
 	ON_WM_CLOSE()
 	ON_COMMAND(ID_SYSTRAY_SHOW, &CpunchDlg::OnSystrayShow)
 	ON_COMMAND(ID_SYSTRAY_QUIT, &CpunchDlg::OnSystrayQuit)
+	ON_WM_POWERBROADCAST()
+	ON_COMMAND(ID_SYSTRAY_HIBERNATION, &CpunchDlg::OnSystrayHibernation)
+	ON_COMMAND(ID_SYSTRAY_SUSPEND, &CpunchDlg::OnSystraySuspend)
 END_MESSAGE_MAP()
 
 
@@ -112,8 +117,19 @@ BOOL CpunchDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	
-	
+	NOTIFYICONDATA nid;
+	nid.cbSize = sizeof(NOTIFYICONDATA);
+	nid.hWnd = this->GetSafeHwnd();
+	nid.uID = 201355;
+	nid.uFlags = NIF_ICON | NIF_MESSAGE |NIF_TIP;
+	nid.hIcon = m_hIcon;
+	nid.uCallbackMessage = WM_MYSHELL_NOTIFY;
+	nid.uVersion = NOTIFYICON_VERSION;  
+	strcpy(nid.szTip , "HappyLeave");
 
+	Shell_NotifyIcon(NIM_ADD,&nid);
+	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+	//this->ShowWindow(SW_HIDE);	//隐藏窗口
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -199,13 +215,15 @@ void CpunchDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: Add your message handler code here and/or call default
 	if(m_mytime.LeaveHappy())
 	{
-		this->ShowWindow(TRUE);
-		this->GetFocus();
+		//this->ShowWindow(TRUE);
+		
 		KillTimer(1);
 		ptime t(second_clock::local_time());
 		std::string time = posix_time::to_iso_extended_string(t);
 		SetDlgItemText(IDC_STATIC_PUNCH_OUT,time.c_str());
-		AfxMessageBox("Happy Leave!:)");
+		//AfxMessageBox("Happy Leave!:)");
+
+		PostMessage(WM_HAPPY_LEAVE,0,0);
 	}
 
 	CDialog::OnTimer(nIDEvent);
@@ -243,7 +261,7 @@ LRESULT CpunchDlg::OnMyTray(WPARAM wParam,LPARAM lParam)
 		return 1;
 	switch(lParam)
 	{
-	case WM_RBUTTONUP://右键起来时弹出快捷菜单，这里只有一个“关闭”
+	case WM_RBUTTONUP:
 		{
 			/*LPPOINT lpoint=new tagPOINT;
 			::GetCursorPos(lpoint);//得到鼠标位置
@@ -270,9 +288,17 @@ LRESULT CpunchDlg::OnMyTray(WPARAM wParam,LPARAM lParam)
 	case WM_LBUTTONDBLCLK://双击左键的处理
 		{
 			this->ShowWindow(SW_SHOW);//简单的显示主窗口完事儿
+			::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+			this->GetFocus();
 		}
 		break;
 	}
+	return 0;
+}
+LRESULT CpunchDlg::OnHappyLeave(WPARAM wParam,LPARAM lParam)
+{
+	//doing much much working to tell "***"
+	AfxMessageBox("OnHappyLeave");
 	return 0;
 }
 void CpunchDlg::OnClose()
@@ -280,7 +306,7 @@ void CpunchDlg::OnClose()
 	// TODO: Add your message handler code here and/or call default
 	//AfxMessageBox("onclose");
 	this->ShowWindow(SW_HIDE);
-	
+	//this->SetFocus();//???
 //	CDialog::OnClose();
 }
 
@@ -289,7 +315,7 @@ void CpunchDlg::OnSystrayShow()
 	// TODO: Add your command handler code here
 	this->ShowWindow(SW_SHOW);
 	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-	this->GetFocus();
+	
 }
 
 void CpunchDlg::OnSystrayQuit()
@@ -300,8 +326,73 @@ void CpunchDlg::OnSystrayQuit()
 	nid.hWnd = this->GetSafeHwnd();
 	nid.uID = 201355;
 	
-
+	SetFocus();
 	Shell_NotifyIcon(NIM_DELETE,&nid);
 	CDialog::OnClose();
 	DestroyWindow();
+}
+
+UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
+{
+	//启动一个
+	switch (nPowerEvent)
+	{
+	case PBT_APMRESUMESUSPEND://恢复
+		//AfxMessageBox("PBT_APMRESUMESUSPEND");
+		//从系统恢复开始自动计时
+		m_mytime.Init();
+		SetTimer(1, 1000, NULL);
+		break;
+	case PBT_APMSUSPEND://进入待机 or 休眠
+		KillTimer(1);
+		//AfxMessageBox("PBT_APMSUSPEND");
+		//OnSystrayQuit();
+
+		break;
+	default:
+		;
+	}
+		return CDialog::OnPowerBroadcast(nPowerEvent, nEventData);
+}
+
+void CpunchDlg::OnSystrayHibernation()
+{
+	// TODO: Add your command handler code here
+	if(IDCANCEL == MessageBox("系统睡眠","警告",MB_OKCANCEL)) return;
+	static HANDLE hToken;
+	static TOKEN_PRIVILEGES tp;
+	static LUID luid;
+	if(::OpenProcessToken(GetCurrentProcess(),
+		TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY,
+		&hToken))
+	{
+		::LookupPrivilegeValue(NULL,SE_SHUTDOWN_NAME,&luid);
+		tp.PrivilegeCount=1;
+		tp.Privileges[0].Luid =luid;
+		tp.Privileges[0].Attributes =SE_PRIVILEGE_ENABLED;
+		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
+	}
+	::SetSystemPowerState(false,true); 
+}
+
+void CpunchDlg::OnSystraySuspend()
+{
+	// TODO: Add your command handler code here
+	if(IDCANCEL == MessageBox("系统待机","警告",MB_OKCANCEL|MB_ICONWARNING)) return;
+	static HANDLE hToken;
+	static TOKEN_PRIVILEGES tp;
+	static LUID luid;
+	if(::OpenProcessToken(GetCurrentProcess(),
+		TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY,
+		&hToken))
+	{
+		::LookupPrivilegeValue(NULL,SE_SHUTDOWN_NAME,&luid);
+		tp.PrivilegeCount=1;
+		tp.Privileges[0].Luid =luid;
+		tp.Privileges[0].Attributes =SE_PRIVILEGE_ENABLED;
+		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
+	}
+	KillTimer(1);
+	::SetSystemPowerState(true,true);//不会给自身再发送 PBT_APMSUSPEND 消息
+
 }
