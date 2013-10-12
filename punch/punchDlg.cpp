@@ -190,7 +190,8 @@ using namespace posix_time;
 void CpunchDlg::OnBnClickedButtonStartTime()
 {
 	// TODO: Add your control notification handler code 
-	
+	CString str;
+	GetWindowText(str);	
 	//date d(day_clock::local_day());
 	m_mytime.Init();
 	SetTimer(1, 1000, NULL);
