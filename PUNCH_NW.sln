@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "punch", "punch\punch.vcproj", "{196DA83F-AD9E-4834-BB6B-1979145D5CD4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnRegularWin", "UnRegularWin\UnRegularWin.vcproj", "{19D650EC-71BE-4616-8B90-13CF943EF6CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{196DA83F-AD9E-4834-BB6B-1979145D5CD4}.Debug|Win32.Build.0 = Debug|Win32
 		{196DA83F-AD9E-4834-BB6B-1979145D5CD4}.Release|Win32.ActiveCfg = Release|Win32
 		{196DA83F-AD9E-4834-BB6B-1979145D5CD4}.Release|Win32.Build.0 = Release|Win32
+		{19D650EC-71BE-4616-8B90-13CF943EF6CF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{19D650EC-71BE-4616-8B90-13CF943EF6CF}.Debug|Win32.Build.0 = Debug|Win32
+		{19D650EC-71BE-4616-8B90-13CF943EF6CF}.Release|Win32.ActiveCfg = Release|Win32
+		{19D650EC-71BE-4616-8B90-13CF943EF6CF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
