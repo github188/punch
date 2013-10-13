@@ -111,41 +111,32 @@ BOOL CUnRegularWinDlg::OnInitDialog()
 	CClientDC dc(this);  
 	CFont mFont;  
 	if (dc.m_hDC!=NULL)  { 
-		CPoint ZbPoints[4] = {CPoint(0,0),CPoint(cx/2,0),CPoint(cx/2,cy),CPoint(cx,cy)}; 
-		CPoint ZbPoints2[4] = {CPoint(cx,cy-10),CPoint(cx/2+10,cy),CPoint(cx/2+10,0),CPoint(10,10)}; 
-		//开始记录窗体轮廓路径  
-		dc.BeginPath();   
-		//设置背景为透明模式,这句话是必须有的。   
-		dc.SetBkMode(TRANSPARENT); 
+		CPoint ZbPoints[4] = {/*CPoint(0,10),*/CPoint(cx/2,10),CPoint(cx/2,cy+10),CPoint(cx-10,cy)}; 
+		CPoint ZbPoints2[4] = {/*CPoint(cx,cy-10),*/CPoint(cx/2+10,cy),CPoint(cx/2+10,0),CPoint(10,0)}; 
+		CClientDC dc(this);  
 		CPen penBlue(PS_SOLID, 5, RGB(0, 0, 255));
 		CPen* pOldPen = dc.SelectObject(&penBlue);
-		dc.MoveTo(0,0);
-		BOOL ft = dc.PolyBezier(ZbPoints,4);
-		dc.MoveTo(cx,cy);
+		dc.SetBkMode(TRANSPARENT); 
+		dc.BeginPath();
+		dc.MoveTo(0,10);
+		BOOL ft = dc.PolyBezierTo(ZbPoints,3);
+		//dc.MoveTo(cx-10,cy);
 		dc.LineTo(cx,cy-10);
-		ft = dc.PolyBezier(ZbPoints2,4);
+		//dc.LineTo(cx,cy-10);
+		ft = dc.PolyBezierTo(ZbPoints2,3);//
+		//dc.MoveTo(10,0);
+		dc.LineTo(0,10);
 		
-		dc.MoveTo(10,10);		
-		dc.LineTo(0,0);
-		//dc.MoveTo(cx,cy);
-		//dc.LineTo(10,10);
-		
-		
-		//dc.LineTo(0,cy);
-		//dc.LineTo(cx,cy);
-		//dc.LineTo(0,0);
-		//dc.CloseFigure();
-		//dc.ArcTo(&rcTemp,CPoint(cx/2,0),CPoint(cx,cy/2));
-		//dc.Arc(&rcTemp,CPoint(0,cy/2),CPoint(cx/2,cy));
 		//结束记录窗体轮廓路径   
 		dc.SelectObject( pOldPen ); 
-		dc.EndPath();  
+		dc.EndPath(); 
+		//dc.StrokePath();
 		//把所记录的路径转化为窗体轮廓句柄   
 		wndRgn = ::PathToRegion(dc.m_hDC);  
 		//赋予窗体指定的轮廓形状  
 		
 		this->SetWindowRgn(wndRgn, TRUE);
-		//::DeleteObject(wndRgn);
+		::DeleteObject(wndRgn);
 	}
 	/*HRGN wndRgn;  
 	CClientDC dc(this);  
@@ -211,6 +202,38 @@ void CUnRegularWinDlg::OnPaint()
 	{
 		CDialog::OnPaint();
 	}
+	int cx = 1280,cy = 800;
+	CPoint ZbPoints[4] = {/*CPoint(0,10),*/CPoint(cx/2,10),CPoint(cx/2,cy+10),CPoint(cx-10,cy)}; 
+	CPoint ZbPoints2[4] = {/*CPoint(cx,cy-10),*/CPoint(cx/2+10,cy),CPoint(cx/2+10,0),CPoint(10,0)}; 
+	CClientDC dc(this);  
+	CPen penBlue(PS_SOLID, 5, RGB(0, 0, 255));
+	CPen* pOldPen = dc.SelectObject(&penBlue);
+	dc.SetBkMode(TRANSPARENT); 
+	dc.BeginPath();
+	dc.MoveTo(0,10);
+	BOOL ft = dc.PolyBezierTo(ZbPoints,3);
+	//dc.MoveTo(cx-10,cy);
+	dc.LineTo(cx,cy-10);
+	//dc.LineTo(cx,cy-10);
+	ft = dc.PolyBezierTo(ZbPoints2,3);//
+	//dc.MoveTo(10,0);
+	dc.LineTo(0,10);
+	//dc.MoveTo(10,10);		
+	//dc.LineTo(0,0);
+	//dc.MoveTo(cx,cy);
+	//dc.LineTo(10,10);
+
+
+	//dc.LineTo(0,cy);
+	//dc.LineTo(cx,cy);
+	//dc.LineTo(0,0);
+	//dc.CloseFigure();
+	//dc.ArcTo(&rcTemp,CPoint(cx/2,0),CPoint(cx,cy/2));
+	//dc.Arc(&rcTemp,CPoint(0,cy/2),CPoint(cx/2,cy));
+	//结束记录窗体轮廓路径  
+	dc.EndPath();
+	dc.SelectObject( pOldPen ); 
+	dc.StrokePath();
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
