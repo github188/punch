@@ -54,8 +54,9 @@ END_MESSAGE_MAP()
 
 
 CpunchDlg::CpunchDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CpunchDlg::IDD, pParent),m_mytime(0,0)//8,1 for test
+	: CDialog(CpunchDlg::IDD, pParent),m_mytime(8,1)//8,1 for test
 {
+	m_bshow = SW_HIDE;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
@@ -190,14 +191,16 @@ using namespace posix_time;
 void CpunchDlg::OnBnClickedButtonStartTime()
 {
 	// TODO: Add your control notification handler code 
-	CString str;
-	GetWindowText(str);	
+	//CString str;
+	//GetWindowText(str);	
 	//date d(day_clock::local_day());
 	m_mytime.Init();
-	SetTimer(1, 1000, NULL);
-	ptime t(second_clock::local_time());
-	std::string time = posix_time::to_iso_extended_string(t);
-	SetDlgItemText(IDC_STATIC_PUNCH_IN,time.c_str());
+	//SetTimer(1, 1000, NULL);
+	//ptime t(second_clock::local_time());
+	//std::string time = posix_time::to_iso_extended_string(t);
+	//SetDlgItemText(IDC_STATIC_PUNCH_IN,time.c_str());
+	SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
+	SetDlgItemText(IDC_STATIC_PUNCH_IN ,m_mytime.time_start_str().c_str());
 }
 
 void CpunchDlg::OnBnClickedButtonLeaveTime()
@@ -288,9 +291,10 @@ LRESULT CpunchDlg::OnMyTray(WPARAM wParam,LPARAM lParam)
 		break;
 	case WM_LBUTTONDBLCLK://双击左键的处理
 		{
-			this->ShowWindow(SW_SHOW);//简单的显示主窗口完事儿
+			this->ShowWindow(m_bshow);//简单的显示主窗口完事儿
+			m_bshow = m_bshow == SW_SHOW?SW_HIDE:SW_SHOW;
 			::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-			this->GetFocus();
+			//this->GetFocus();
 		}
 		break;
 	}
@@ -307,6 +311,7 @@ void CpunchDlg::OnClose()
 	// TODO: Add your message handler code here and/or call default
 	//AfxMessageBox("onclose");
 	this->ShowWindow(SW_HIDE);
+	m_bshow = SW_SHOW;
 	//this->SetFocus();//???
 //	CDialog::OnClose();
 }
@@ -315,6 +320,7 @@ void CpunchDlg::OnSystrayShow()
 {
 	// TODO: Add your command handler code here
 	this->ShowWindow(SW_SHOW);
+	m_bshow = SW_HIDE;
 	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
 	
 }
@@ -328,7 +334,7 @@ void CpunchDlg::OnSystrayQuit()
 	nid.uID = 201355;
 	
 	SetFocus();
-	Shell_NotifyIcon(NIM_DELETE,&nid);
+	Shell_NotifyIcon(NIM_DELETE,&nid);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 	CDialog::OnClose();
 	DestroyWindow();
 }

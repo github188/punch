@@ -34,6 +34,7 @@ public:
 	afx_msg void OnBnClickedButtonLeaveTime();
 private:
 	CMyWorkTime m_mytime;
+	int m_bshow;
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonForTest();
