@@ -40,11 +40,13 @@ public:
 	bool LeaveHappy();
 	std::string time_start_str();
 	std::string time_end_str();
+	bool IsInRestTime( );
 private:
 	CMyWorkTime(void);
 	boost::posix_time::ptime* mp_start;
 	//boost::posix_time::ptime* mp_leave;                   
-	boost::posix_time::time_period* mp_worktime;
+	boost::posix_time::time_period* mp_worktime;//包括了休息时间段
+	boost::posix_time::time_period* mp_resttime;//休息时间段
 private:
 	int m_iwork;
 	int m_irest;

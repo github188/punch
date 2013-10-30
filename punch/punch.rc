@@ -70,7 +70,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                  "res\\pajarito2.ico" //"res\\punch.ico" 
+IDR_MAINFRAME           ICON                    "res\\pajarito2.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -92,13 +92,26 @@ IDD_PUNCH_DIALOG DIALOGEX 0, 0, 263, 159
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "punch"
+MENU IDR_MENU_MAIN
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Punch in",IDC_BUTTON_START_TIME,33,31,44,17
-    PUSHBUTTON      "Punch out",IDC_BUTTON_LEAVE_TIME,33,81,44,17
-    CTEXT           "NULL",IDC_STATIC_PUNCH_IN,89,34,118,10
-    CTEXT           "NULL",IDC_STATIC_PUNCH_OUT,89,81,118,10
+    CTEXT           "NULL",IDC_STATIC_PUNCH_IN,53,26,118,10
+    CTEXT           "NULL",IDC_STATIC_PUNCH_OUT,53,70,118,10
     PUSHBUTTON      "test",IDC_BUTTON_FOR_TEST,7,146,6,6,NOT WS_VISIBLE
+END
+
+IDD_DIALOG_SET_TIME DIALOGEX 0, 0, 109, 49
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "时间设置"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,12,28,32,14
+    PUSHBUTTON      "Cancel",IDCANCEL,57,28,30,14
+    EDITTEXT        IDC_EDIT_HOURS,7,8,24,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MINITUS,43,8,24,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SECONDS,75,8,24,16,ES_AUTOHSCROLL
+    CTEXT           ":",IDC_STATIC,33,12,8,9
+    CTEXT           ":",IDC_STATIC,68,12,8,9
 END
 
 
@@ -164,6 +177,12 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 152
     END
+
+    IDD_DIALOG_SET_TIME, DIALOG
+    BEGIN
+        RIGHTMARGIN, 103
+        BOTTOMMARGIN, 48
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -181,6 +200,19 @@ BEGIN
         MENUITEM "待机",                          ID_SYSTRAY_SUSPEND
         MENUITEM "休眠",                          ID_SYSTRAY_HIBERNATION
         MENUITEM "退出",                          ID_SYSTRAY_QUIT
+    END
+END
+
+IDR_MENU_MAIN MENU 
+BEGIN
+    POPUP "配置"
+    BEGIN
+        MENUITEM "手动设置时间",                      ID_MANUAL_SET_TIME
+    END
+    POPUP "调试"
+    BEGIN
+        MENUITEM "test1",                       IDC_BUTTON_START_TIME
+        MENUITEM "test2",                       IDC_BUTTON_LEAVE_TIME
     END
 END
 

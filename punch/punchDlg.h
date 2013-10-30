@@ -35,6 +35,7 @@ public:
 private:
 	CMyWorkTime m_mytime;
 	int m_bshow;
+	bool m_brest;
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonForTest();
@@ -46,4 +47,5 @@ public:
 	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, UINT nEventData);
 	afx_msg void OnSystrayHibernation();
 	afx_msg void OnSystraySuspend();
+	afx_msg void OnManualSetTime();
 };

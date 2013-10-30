@@ -11,6 +11,7 @@
 #include "boost\date_time\local_time\local_time.hpp"
 //#include "boost/date_time/posix_time/time_formatters.hpp"
 //#include <string>
+#include "mytimesetdlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -57,6 +58,7 @@ CpunchDlg::CpunchDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CpunchDlg::IDD, pParent),m_mytime(8,1)//8,1 for test
 {
 	m_bshow = SW_HIDE;
+	m_brest = false;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
@@ -82,6 +84,7 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	ON_WM_POWERBROADCAST()
 	ON_COMMAND(ID_SYSTRAY_HIBERNATION, &CpunchDlg::OnSystrayHibernation)
 	ON_COMMAND(ID_SYSTRAY_SUSPEND, &CpunchDlg::OnSystraySuspend)
+	ON_COMMAND(ID_MANUAL_SET_TIME, &CpunchDlg::OnManualSetTime)
 END_MESSAGE_MAP()
 
 
@@ -195,6 +198,8 @@ void CpunchDlg::OnBnClickedButtonStartTime()
 	//GetWindowText(str);	
 	//date d(day_clock::local_day());
 	m_mytime.Init();
+
+	m_brest = m_mytime.IsInRestTime();
 	//SetTimer(1, 1000, NULL);
 	//ptime t(second_clock::local_time());
 	//std::string time = posix_time::to_iso_extended_string(t);
@@ -347,12 +352,15 @@ UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
 	case PBT_APMRESUMESUSPEND://恢复
 		//AfxMessageBox("PBT_APMRESUMESUSPEND");
 		//从系统恢复开始自动计时
-		KillTimer(1);
-		m_mytime.Init();
-		SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
-		SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
-		OnSystrayShow();
-		SetTimer(1, 1000, NULL);
+		if(m_brest)
+		{
+			KillTimer(1);
+			m_mytime.Init();
+			SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
+			SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
+			OnSystrayShow();
+			SetTimer(1, 1000, NULL);
+		}
 		break;
 	case PBT_APMSUSPEND://进入待机 or 休眠
 		//KillTimer(1);
@@ -404,6 +412,30 @@ void CpunchDlg::OnSystraySuspend()
 		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
 	}
 	//KillTimer(1);
+	//
+
+	if(m_mytime.IsInRestTime())
+	{
+		m_brest = false;
+	}
+	else
+		m_brest = true;
 	::SetSystemPowerState(true,true);//不会给自身再发送 PBT_APMSUSPEND 消息
 
+}
+
+void CpunchDlg::OnManualSetTime()
+{
+	// TODO: Add your command handler code here
+	CMyTimeSetDlg dlg;
+	if(IDOK == dlg.DoModal())
+	{
+		KillTimer(1);
+		m_mytime.Init(dlg.m_hours,dlg.m_minitus,dlg.m_seconds);
+		SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
+		SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
+		OnSystrayShow();
+		SetTimer(1, 1000, NULL);
+		
+	}
 }
