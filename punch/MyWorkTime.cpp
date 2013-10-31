@@ -55,6 +55,9 @@ bool CMyWorkTime::LeaveHappy( )
 
 bool CMyWorkTime::IsInRestTime( )
 {
+	std::string mstr = to_simple_string(*mp_resttime);
+	mstr = to_simple_string(second_clock::local_time());
+
    return mp_resttime->contains(second_clock::local_time());
 }
 //必须在init后才能调用

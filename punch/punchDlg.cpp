@@ -354,6 +354,7 @@ UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
 		//从系统恢复开始自动计时
 		if(m_brest)
 		{
+			m_brest = false;
 			KillTimer(1);
 			m_mytime.Init();
 			SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
@@ -361,9 +362,19 @@ UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
 			OnSystrayShow();
 			SetTimer(1, 1000, NULL);
 		}
+		
 		break;
 	case PBT_APMSUSPEND://进入待机 or 休眠
 		//KillTimer(1);
+		/*if(m_mytime.IsInRestTime())
+		{
+			m_brest = false;
+		}
+		else
+		{
+			m_brest = true;
+		}*/
+		m_bshow = FALSE;
 		//AfxMessageBox("PBT_APMSUSPEND");
 		//OnSystrayQuit();
 
@@ -391,6 +402,15 @@ void CpunchDlg::OnSystrayHibernation()
 		tp.Privileges[0].Attributes =SE_PRIVILEGE_ENABLED;
 		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
 	}
+	if(m_mytime.IsInRestTime())
+	{
+		m_brest = false;
+	}
+	else
+	{
+		m_brest = true;
+	}
+	m_bshow = FALSE;
 	::SetSystemPowerState(false,true); 
 }
 
@@ -409,6 +429,7 @@ void CpunchDlg::OnSystraySuspend()
 		tp.PrivilegeCount=1;
 		tp.Privileges[0].Luid =luid;
 		tp.Privileges[0].Attributes =SE_PRIVILEGE_ENABLED;
+		
 		::AdjustTokenPrivileges(hToken,false,&tp,sizeof(TOKEN_PRIVILEGES),NULL,NULL);
 	}
 	//KillTimer(1);
@@ -419,7 +440,10 @@ void CpunchDlg::OnSystraySuspend()
 		m_brest = false;
 	}
 	else
+	{
 		m_brest = true;
+	}
+	m_bshow = FALSE;
 	::SetSystemPowerState(true,true);//不会给自身再发送 PBT_APMSUSPEND 消息
 
 }
