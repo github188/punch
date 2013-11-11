@@ -57,9 +57,12 @@ END_MESSAGE_MAP()
 CpunchDlg::CpunchDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CpunchDlg::IDD, pParent),m_mytime(8,1)//8,1 for test
 {
+	m_isStart = 0;
 	m_bshow = SW_HIDE;
 	m_brest = false;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_menu.LoadMenu(IDR_MENU_SYSTRAY); //装载自定义的右键菜单 
+	//CMenu   *pContextMenu=menu.GetSubMenu(0); 
 }
 
 void CpunchDlg::DoDataExchange(CDataExchange* pDX)
@@ -85,6 +88,8 @@ BEGIN_MESSAGE_MAP(CpunchDlg, CDialog)
 	ON_COMMAND(ID_SYSTRAY_HIBERNATION, &CpunchDlg::OnSystrayHibernation)
 	ON_COMMAND(ID_SYSTRAY_SUSPEND, &CpunchDlg::OnSystraySuspend)
 	ON_COMMAND(ID_MANUAL_SET_TIME, &CpunchDlg::OnManualSetTime)
+	ON_COMMAND(ID_SYSTRAY_AUTOSTART, &CpunchDlg::OnSystrayAutostart)
+	ON_UPDATE_COMMAND_UI(ID_SYSTRAY_AUTOSTART, &CpunchDlg::OnUpdateSystrayAutostart)
 END_MESSAGE_MAP()
 
 
@@ -134,6 +139,19 @@ BOOL CpunchDlg::OnInitDialog()
 	Shell_NotifyIcon(NIM_ADD,&nid);
 	::SetWindowPos(GetSafeHwnd(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
 	//this->ShowWindow(SW_HIDE);	//隐藏窗口
+
+	
+	if( ERROR_SUCCESS == RegGetValue(HKEY_LOCAL_MACHINE,_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),"punch",RRF_RT_REG_SZ,NULL,NULL,NULL))
+	{
+		m_isStart = TRUE;
+	}
+
+	else
+	{
+		m_isStart = FALSE;
+	}
+
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -286,12 +304,14 @@ LRESULT CpunchDlg::OnMyTray(WPARAM wParam,LPARAM lParam)
 			menu.DestroyMenu();
 			delete lpoint;*/
 			//AfxMessageBox("rbuttonup");
-			CMenu   menu;   //定义下面要用到的cmenu对象
-			menu.LoadMenu(IDR_MENU_SYSTRAY); //装载自定义的右键菜单 
-			CMenu   *pContextMenu=menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
+			//CMenu   menu;   //定义下面要用到的cmenu对象
+			//menu.LoadMenu(IDR_MENU_SYSTRAY); //装载自定义的右键菜单 
+			//CMenu   *pContextMenu=menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
 			CPoint point;//定义一个用于确定光标位置的位置  
-			GetCursorPos(&point);//获取当前光标的位置，以便使得菜单可以跟随光标  
-			pContextMenu->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON,point.x,point.y,   AfxGetMainWnd()); //在指定位置显示弹出菜单
+			GetCursorPos(&point);//获取当前光标的位置，以便使得菜单可以跟随光标
+			if(m_isStart)m_menu.GetSubMenu(0)->CheckMenuItem( 3, MF_CHECKED | MF_BYPOSITION);
+			else m_menu.GetSubMenu(0)->CheckMenuItem( 3, MF_UNCHECKED | MF_BYPOSITION);
+			/*pContextMenu*/m_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON,point.x,point.y,   AfxGetMainWnd()); //在指定位置显示弹出菜单
 		}
 		break;
 	case WM_LBUTTONDBLCLK://双击左键的处理
@@ -462,4 +482,54 @@ void CpunchDlg::OnManualSetTime()
 		SetTimer(1, 1000, NULL);
 		
 	}
+}
+
+void CpunchDlg::OnSystrayAutostart()
+{
+	// TODO: Add your command handler code here
+    CString myAutoRun = "punch";
+	HKEY hKey;
+	CString str = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+	if (m_isStart)
+	{
+		//开机自动启动
+		TCHAR m_fileName[MAX_PATH];
+		GetModuleFileName(NULL,m_fileName,MAX_PATH);
+		if (ERROR_SUCCESS != RegCreateKey(HKEY_LOCAL_MACHINE, str, &hKey))
+		{
+			MessageBox(_T("打开注册表项失败"));
+			RegCloseKey(hKey);
+			return ;
+		}
+		int length = 0;
+		while(m_fileName[length]!=_T('\0'))
+			length++;
+		if (ERROR_SUCCESS != RegSetValueEx(hKey, myAutoRun, 0, REG_SZ, (const BYTE *)m_fileName, sizeof(TCHAR)*length))
+		{
+			MessageBox(_T("写注册表失败"));
+			RegCloseKey(hKey);
+		}
+		RegCloseKey(hKey);
+	}
+	else
+	{
+		//取消开机自动启动
+		if((RegOpenKeyEx(HKEY_LOCAL_MACHINE,str,0,KEY_WRITE,&hKey))==ERROR_SUCCESS)
+		{
+			if(RegDeleteValue(hKey,myAutoRun)!=ERROR_SUCCESS)
+			{
+				MessageBox(_T("删除注册表失败"));
+			}
+			RegCloseKey(hKey);
+		}
+
+	}	
+}
+
+void CpunchDlg::OnUpdateSystrayAutostart(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	//pCmdUI->SetCheck(TRUE/*!m_isStart*/); //无效
+	m_isStart = !m_isStart;
 }

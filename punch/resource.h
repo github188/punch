@@ -19,7 +19,6 @@
 #define IDC_BUTTON_FOR_TEST             1004
 #define IDC_EDIT_HOURS                  1005
 #define IDC_EDIT_MINITUS                1006
-#define IDC_EDIT3                       1007
 #define IDC_EDIT_SECONDS                1007
 #define ID_SYSTRAY_32771                32771
 #define ID_SYSTRAY_32772                32772
@@ -34,13 +33,15 @@
 #define ID_32781                        32781
 #define ID_MANUL_SET_TIME               32782
 #define ID_MANUAL_SET_TIME              32783
+#define ID_SYSTRAY_32784                32784
+#define ID_SYSTRAY_AUTOSTART            32785
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
-#define _APS_NEXT_COMMAND_VALUE         32784
+#define _APS_NEXT_COMMAND_VALUE         32786
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

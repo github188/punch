@@ -199,6 +199,7 @@ BEGIN
         MENUITEM "显示",                          ID_SYSTRAY_SHOW
         MENUITEM "待机",                          ID_SYSTRAY_SUSPEND
         MENUITEM "休眠",                          ID_SYSTRAY_HIBERNATION
+        MENUITEM "自启",                          ID_SYSTRAY_AUTOSTART
         MENUITEM "退出",                          ID_SYSTRAY_QUIT
     END
 END

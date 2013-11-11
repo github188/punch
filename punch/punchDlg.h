@@ -36,6 +36,9 @@ private:
 	CMyWorkTime m_mytime;
 	int m_bshow;
 	bool m_brest;
+	BOOL m_isStart;
+	CMenu   m_menu;   //定义下面要用到的cmenu对象
+	
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonForTest();
@@ -48,4 +51,6 @@ public:
 	afx_msg void OnSystrayHibernation();
 	afx_msg void OnSystraySuspend();
 	afx_msg void OnManualSetTime();
+	afx_msg void OnSystrayAutostart();
+	afx_msg void OnUpdateSystrayAutostart(CCmdUI *pCmdUI);
 };
