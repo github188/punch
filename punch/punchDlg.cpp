@@ -151,6 +151,14 @@ BOOL CpunchDlg::OnInitDialog()
 		m_isStart = FALSE;
 	}
 
+ //启动初始化设置
+	m_brest = false;
+	KillTimer(1);
+	m_mytime.Init();
+	SetDlgItemText(IDC_STATIC_PUNCH_IN,m_mytime.time_start_str().c_str());
+	SetDlgItemText(IDC_STATIC_PUNCH_OUT,m_mytime.time_end_str().c_str());
+	OnSystrayShow();
+	SetTimer(1, 1000, NULL);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -215,6 +223,7 @@ void CpunchDlg::OnBnClickedButtonStartTime()
 	//CString str;
 	//GetWindowText(str);	
 	//date d(day_clock::local_day());
+	OnPowerBroadcast(99,99);
 	m_mytime.Init();
 
 	m_brest = m_mytime.IsInRestTime();
@@ -366,9 +375,12 @@ void CpunchDlg::OnSystrayQuit()
 
 UINT CpunchDlg::OnPowerBroadcast(UINT nPowerEvent, UINT nEventData)
 {
+	//char buff[128];
+	//AfxMessageBox( itoa(nPowerEvent,buff,10));
 	//启动一个
 	switch (nPowerEvent)
 	{
+		
 	case PBT_APMRESUMESUSPEND://恢复
 		//AfxMessageBox("PBT_APMRESUMESUSPEND");
 		//从系统恢复开始自动计时
